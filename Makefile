@@ -6,7 +6,11 @@ all:
 
 test:
 
-dev:
+install-dep:
+	go get github.com/domluna/watcher
 
-build:
+build: install-dep
 	go build
+
+dev:
+	./wat 'make build' *.go

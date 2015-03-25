@@ -1,6 +1,6 @@
 package main
 
-import "github.com/go-fsnotify/fsnotify"
+import "github.com/domluna/watcher"
 import "log"
 import "os"
 import "os/exec"
@@ -35,6 +35,8 @@ func runCmds() {
 			_ = cmd.Process.Kill()
 			cmds[i] = exec.Command(cmd.Path, cmd.Args[1:]...)
 			cmd = cmds[i]
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
 		}
 		err = cmd.Run()
 		if err != nil {
@@ -44,30 +46,24 @@ func runCmds() {
 }
 
 func watchFiles() error {
-	watcher, err := fsnotify.NewWatcher()
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer watcher.Close()
-
 	done := make(chan bool)
-	go func() {
-		for {
-			log.Println(".")
-			select {
-			case _ = <-watcher.Events:
-				runCmds()
-			case err := <-watcher.Errors:
-				log.Println(err)
-			}
-		}
-	}()
-
 	for _, f := range files {
-		err = watcher.Add(f)
+		w, err := watcher.New(f)
+		defer w.Close()
 		if err != nil {
 			log.Fatal(err)
 		}
+		w.Watch()
+
+		go func() {
+			runCmds()
+			for {
+				select {
+				case <-w.Events:
+					runCmds()
+				}
+			}
+		}()
 	}
 	<-done
 	return nil
