@@ -11,5 +11,5 @@ build:
 
 test:
 
-dev:
+dev: build
 	./wat 'make build' 'make test' -- *.go Makefile
