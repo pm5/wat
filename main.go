@@ -11,6 +11,9 @@ var files []string
 
 func readArgs() {
 	i := 1
+	if len(os.Args) < 3 {
+		return
+	}
 	for i < len(os.Args)-1 && os.Args[i] != "--" {
 		terms := strings.Split(os.Args[i], " ")
 		cmd := exec.Command(terms[0], terms[1:]...)
@@ -70,6 +73,9 @@ func watchFiles() error {
 
 func main() {
 	readArgs()
+	if len(cmds) == 0 || len(files) == 0 {
+		os.Exit(-1)
+	}
 	runCmds()
 	watchFiles()
 }
