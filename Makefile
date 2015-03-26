@@ -1,16 +1,15 @@
-####
 
-.PHONY: all test dev build
+.PHONY: all install-dep build test dev
 
-all:
-
-test:
+all: install-dep build
 
 install-dep:
 	go get github.com/domluna/watcher
 
-build: install-dep
+build:
 	go build
 
+test:
+
 dev:
-	./wat 'make build' -- *.go Makefile
+	./wat 'make build' 'make test' -- *.go Makefile
