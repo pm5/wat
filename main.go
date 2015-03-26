@@ -56,7 +56,6 @@ func watchFiles() error {
 		w.Watch()
 
 		go func() {
-			runCmds()
 			for {
 				select {
 				case <-w.Events:
@@ -71,5 +70,6 @@ func watchFiles() error {
 
 func main() {
 	readArgs()
+	runCmds()
 	watchFiles()
 }

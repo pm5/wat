@@ -13,4 +13,4 @@ build: install-dep
 	go build
 
 dev:
-	./wat 'make build' *.go
+	./wat 'make build' -- *.go Makefile
